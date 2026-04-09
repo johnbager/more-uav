@@ -13,7 +13,7 @@ The full dataset is currently available through Google Drive.
 
 - **Google Drive**: [Download Link](https://drive.google.com/drive/folders/1KDKjIvxHtZYHHxQxKrxzxs368npEc1Y1?usp=drive_link)
 
-To simplify transfer and downloading, we first provide image-feature encoded files for the full dataset. We recommend this as the primary way to access the release. With the tool we provide, the data can also be decoded and re-encoded for different image encoders when needed.
+To simplify transfer and downloading, we first provide image-feature encoded files for the full dataset. We recommend this as the primary way to access the release.
 
 We additionally provide zip packages of the videos and images for users who prefer to work from the original visual data.
 
