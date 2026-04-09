@@ -27,7 +27,13 @@ if ! git remote get-url origin >/dev/null 2>&1; then
   exit 1
 fi
 
-BRANCH="$(git branch --show-current)"
+BRANCH="$(git symbolic-ref --short -q HEAD || true)"
+if [[ -z "$BRANCH" ]] && git show-ref --verify --quiet refs/heads/main; then
+  if [[ "$(git rev-parse HEAD)" == "$(git rev-parse main)" ]]; then
+    git checkout main >/dev/null 2>&1 || true
+    BRANCH="$(git symbolic-ref --short -q HEAD || true)"
+  fi
+fi
 if [[ "$BRANCH" != "main" ]]; then
   echo "Current branch is '$BRANCH'. Please switch to 'main' before syncing."
   exit 1
