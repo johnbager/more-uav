@@ -24,22 +24,25 @@ The released dataset is organized into `train/`, `val/`, and `test/` splits.
 ```text
 dataset/
 ├── train/
+│   ├── expression.json
 │   ├── case_00000001/
 │   │   ├── images/
 │   │   │   ├── 000001.jpg
 │   │   │   ├── 000002.jpg
 │   │   │   └── ...
-│   │   ├── bboxes.json
-│   │   └── expression.txt
+│   │   └── bboxes.json
 │   └── ...
 ├── val/
+│   ├── expression.json
 │   └── ...
 └── test/
+    ├── expression.json
     └── ...
 ```
+
+Each split contains one `expression.json` file for the cases in that split.
 
 Each case folder contains:
 
 - `images/` with ordered video frames
 - `bboxes.json` with frame-level target annotations for the clip
-- `expression.txt` with the motion-centric referring expression for that case

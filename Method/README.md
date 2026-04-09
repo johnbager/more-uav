@@ -43,12 +43,12 @@ The dataset root is expected to follow:
 
 Each split should contain:
 
+- `expression.json`
 - one folder per sample, such as `case_00000001/`
 - `images/`
 - `bboxes.json`
-- `expression.txt`
 
-The loaders in this folder read the referring expression from each case-level `expression.txt` file.
+The loaders in this folder first read the split-level `expression.json`. If it is absent, they fall back to case-level `expression.txt`.
 
 ## Run Qwen Baseline
 

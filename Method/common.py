@@ -64,9 +64,52 @@ def load_expression_text(case_dir: Path):
     return expression_path.read_text(encoding="utf-8").strip()
 
 
+def normalize_expression_entries(raw):
+    entries = []
+    if isinstance(raw, dict):
+        if "data" in raw and isinstance(raw["data"], list):
+            return normalize_expression_entries(raw["data"])
+        for key, value in raw.items():
+            if isinstance(value, str):
+                entries.append((str(key), value))
+            elif isinstance(value, dict):
+                case_id = value.get("id", key)
+                expression = value.get("expression") or value.get("text") or value.get("caption") or ""
+                entries.append((str(case_id), str(expression)))
+    elif isinstance(raw, list):
+        for item in raw:
+            if not isinstance(item, dict):
+                continue
+            case_id = item.get("id") or item.get("sample_id") or item.get("case_id")
+            expression = item.get("expression") or item.get("text") or item.get("caption") or ""
+            if case_id is not None:
+                entries.append((str(case_id), str(expression)))
+    return entries
+
+
 def load_samples(dataset_root: str | Path, split: str, limit: int = 0):
     split_dir = Path(dataset_root) / split
     samples = []
+    expression_path = split_dir / "expression.json"
+    if expression_path.exists():
+        seen = set()
+        raw_entries = normalize_expression_entries(load_json(expression_path))
+        for raw_id, expression in raw_entries:
+            case_dir = resolve_case_dir(split_dir, raw_id)
+            if case_dir is None:
+                continue
+            sample_id = case_dir.name
+            if sample_id in seen:
+                continue
+            frame_paths = list_frames(case_dir / "images")
+            if not frame_paths:
+                continue
+            samples.append(Sample(sample_id=sample_id, expression=expression, case_dir=case_dir, frame_paths=frame_paths))
+            seen.add(sample_id)
+            if limit and len(samples) >= limit:
+                return samples
+        if samples:
+            return samples
     for case_dir in sorted(path for path in split_dir.iterdir() if path.is_dir()):
         frame_paths = list_frames(case_dir / "images")
         if not frame_paths:
